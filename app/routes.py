@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import db, Movie, User
 from werkzeug.security import check_password_hash
+from sqlalchemy import desc
 
 main = Blueprint('main', __name__)
 
@@ -44,7 +45,7 @@ def watched_movies():
             flash('Please enter a movie title.', 'danger')
         return redirect(url_for('main.watched_movies'))
 
-    movies = Movie.query.filter_by(watched=True).all()
+    movies = Movie.query.filter_by(watched=True).order_by(desc(Movie.id)).all()
     return render_template('watched.html', movies=movies)
 
 
