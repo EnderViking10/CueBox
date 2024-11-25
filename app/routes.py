@@ -16,6 +16,9 @@ def home():
 def add_movie():
     title = request.form.get('title')
     if title:
+        if len(title) > 50:
+            flash('Movie title must be less than 64 characters', 'danger')
+            return redirect(url_for('main.home'))
         new_movie = Movie(title=title)
         db.session.add(new_movie)
         db.session.commit()
@@ -54,6 +57,18 @@ def mark_watched(movie_id):
         movie.watched = True
         db.session.commit()
         flash('Movie marked as watched!', 'success')
+    return redirect(url_for('main.home'))
+
+
+@main.route('/delete_movie/<int:movie_id>')
+@login_required
+def delete_movie(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+    if current_user.is_admin:
+        movie.in_queue = False
+        movie.watched = True
+        db.session.commit()
+        flash('Movie has been deleted', 'success')
     return redirect(url_for('main.home'))
 
 
