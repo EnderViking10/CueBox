@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Movie Queue{% endblock %}
+{% block title %}Movie Suggestions{% endblock %}
 {% block content %}
-    <h2>Movie Queue</h2>
+    <h2>Movie Suggestions</h2>
     {% if current_user.is_authenticated and current_user.is_admin %}
         <a href="{{ url_for('main.delete_all') }}">
             <button>Delete all</button>
