@@ -10,12 +10,13 @@
     {% endif %}
     <ul>
         {% for movie in movies %}
-            <li>{{ movie.title }}</li>
-            {% if current_user.is_authenticated and current_user.is_admin %}
-                <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">
-                    <button>Delete Movie</button>
-                </a>
-            {% endif %}
+            <li>{{ movie.title }}
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                    <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">
+                        <button>Delete Movie</button>
+                    </a>
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}
