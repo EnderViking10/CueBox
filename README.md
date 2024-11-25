@@ -1,8 +1,11 @@
 # CueBox
+
 ### Description
+
 A simple website made to track movies that I need to see and movies that I have seen.
 
 ### Requirement
+
 - Flask==3.1.0
 - Flask_Login==0.6.3
 - Flask_Migrate==4.0.7
@@ -10,12 +13,17 @@ A simple website made to track movies that I need to see and movies that I have 
 - flask_wtf==1.2.2
 - Werkzeug==3.1.3
 - WTForms==3.2.1
+- Flask-Login~=0.6.3
+- SQLAlchemy~=2.0.36
+- Flask-Migrate~=4.0.7
 
 ### How to run
+
 I use gunicorn with the syntax
 `gunicorn -w 4 -b 0.0.0.0:8000 'app:create_app("config.ProductionConfig")'`
 
 I then use NGINX as a web service, the config for that looks like
+
 ```
 server {
     listen 80;
@@ -39,4 +47,5 @@ server {
 ```
 
 ### Todo
+
 I plan on adding https ssl/tls support in the future.
