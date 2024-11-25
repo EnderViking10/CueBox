@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import db, Movie, User
 from werkzeug.security import check_password_hash
@@ -9,8 +9,25 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def home():
+    movies = Movie.query.filter_by(in_queue=False, watched=False).all()
+    return render_template('suggestions.html', movies=movies)
+
+
+@main.route('/queue')
+def queue():
     movies = Movie.query.filter_by(in_queue=True).all()
     return render_template('queue.html', movies=movies)
+
+
+@main.route('/mark_queue/<int:movie_id>')
+@login_required
+def mark_queue(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+    if current_user.is_admin:
+        movie.in_queue = True
+        db.session.commit()
+        flash('Movie moved to queue!', 'success')
+    return redirect(url_for('main.home'))
 
 
 @main.route('/add', methods=['POST'])
@@ -23,7 +40,7 @@ def add_movie():
         new_movie = Movie(title=title)
         db.session.add(new_movie)
         db.session.commit()
-        flash('Movie added to the queue!', 'success')
+        flash('Movie has been suggested!', 'success')
     return redirect(url_for('main.home'))
 
 
@@ -58,7 +75,7 @@ def mark_watched(movie_id):
         movie.watched = True
         db.session.commit()
         flash('Movie marked as watched!', 'success')
-    return redirect(url_for('main.home'))
+    return redirect(url_for('main.queue'))
 
 
 @main.route('/delete_movie/<int:movie_id>')
@@ -69,6 +86,18 @@ def delete_movie(movie_id):
         db.session.delete(movie)
         db.session.commit()
         flash('Movie has been deleted', 'success')
+    return redirect(url_for('main.home'))
+
+
+@main.route('/delete_all')
+@login_required
+def delete_all():
+    movies = Movie.query.filter_by(in_queue=False, watched=False)
+    if current_user.is_admin:
+        for movie in movies:
+            db.session.delete(movie)
+        db.session.commit()
+        flash('Deleted all movies', 'success')
     return redirect(url_for('main.home'))
 
 

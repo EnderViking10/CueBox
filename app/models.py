@@ -11,5 +11,5 @@ class User(db.Model, UserMixin):
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    in_queue = db.Column(db.Boolean, default=True)
+    in_queue = db.Column(db.Boolean, default=False)
     watched = db.Column(db.Boolean, default=False)

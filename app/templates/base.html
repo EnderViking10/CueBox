@@ -10,7 +10,8 @@
 <header>
     <h1>CueBox</h1>
     <nav>
-        <a href="{{ url_for('main.home') }}">Queue</a>
+        <a href="{{ url_for('main.home') }}">Suggestions</a>
+        <a href="{{ url_for('main.queue') }}">Queue</a>
         <a href="{{ url_for('main.watched_movies') }}">Watched</a>
         {% if current_user.is_authenticated %}
             <a href="{{ url_for('main.logout') }}">Logout</a>

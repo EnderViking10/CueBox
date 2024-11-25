@@ -2,10 +2,6 @@
 {% block title %}Movie Queue{% endblock %}
 {% block content %}
 <h2>Movie Queue</h2>
-<form action="{{ url_for('main.add_movie') }}" method="POST">
-    <input type="text" name="title" placeholder="Add a movie to the queue" required>
-    <button type="submit">Add Movie</button>
-</form>
 <ul>
     {% for movie in movies %}
     <li>
