@@ -65,8 +65,7 @@ def mark_watched(movie_id):
 def delete_movie(movie_id):
     movie = Movie.query.get_or_404(movie_id)
     if current_user.is_admin:
-        movie.in_queue = False
-        movie.watched = True
+        db.session.delete(movie)
         db.session.commit()
         flash('Movie has been deleted', 'success')
     return redirect(url_for('main.home'))
