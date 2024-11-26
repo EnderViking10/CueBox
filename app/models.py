@@ -13,3 +13,7 @@ class Movie(db.Model):
     title = db.Column(db.String(200), nullable=False)
     in_queue = db.Column(db.Boolean, default=False)
     watched = db.Column(db.Boolean, default=False)
+    year = db.Column(db.Integer, nullable=False)
+    runtime = db.Column(db.Integer, nullable=False)
+    genre = db.Column(db.String(200), nullable=False)
+    imdb_rating = db.Column(db.Integer, nullable=False)
