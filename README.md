@@ -52,4 +52,5 @@ server {
 
 ### Todo
 
-I plan on adding https ssl/tls support in the future.
+- I plan on adding https ssl/tls support in the future.
+- Add filter for queue and watched
