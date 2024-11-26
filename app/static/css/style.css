@@ -266,3 +266,48 @@ input:checked + .slider:before {
     font-size: 1rem;
     color: var(--header-text);
 }
+
+.flash-messages {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto; /* Adjusts width to content */
+    max-width: 90%; /* Prevents the message from being too wide */
+    z-index: 1000;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.flash-messages ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.flash {
+    display: inline-block; /* Ensures flash messages are horizontally centered */
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+    color: white;
+}
+
+.flash-success {
+    background-color: #4CAF50; /* Green for success */
+}
+
+.flash-danger {
+    background-color: #f44336; /* Red for errors */
+}
+
+.flash-info {
+    background-color: #2196F3; /* Blue for informational messages */
+}
+
+.flash-warning {
+    background-color: #ff9800; /* Orange for warnings */
+}
+

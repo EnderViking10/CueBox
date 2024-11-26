@@ -1,4 +1,5 @@
 import urllib.parse
+from sqlite3 import IntegrityError
 
 import requests
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
@@ -61,8 +62,13 @@ def add_movie():
             genre=data.get('Genre'),
             imdb_rating=data.get('imdbRating')
         )
-        db.session.add(new_movie)
-        db.session.commit()
+        try:
+            db.session.add(new_movie)
+            db.session.commit()
+            flash('Movie added successfully!', 'success')
+        except IntegrityError:
+            db.session.rollback()  # Rollback the transaction
+            flash('Movie with this title already exists.', 'danger')
     return redirect(url_for('main.home'))
 
 
