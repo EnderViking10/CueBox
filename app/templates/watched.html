@@ -2,21 +2,34 @@
 {% block title %}Watched Movies{% endblock %}
 {% block content %}
     <h2>Watched Movies</h2>
-    {% if current_user.is_authenticated and current_user.is_admin %}
-        <form action="{{ url_for('main.watched_movies') }}" method="POST">
-            <input type="text" name="title" placeholder="Add a watched movie" required>
-            <button type="submit">Add Movie</button>
-        </form>
-    {% endif %}
-    <ul>
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Runtime</th>
+            <th>Genre</th>
+            <th>IMDb Rating</th>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                <th>Actions</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
         {% for movie in movies %}
-            <li>{{ movie.title }}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.year }}</td>
+                <td>{{ movie.runtime }}</td>
+                <td>{{ movie.genre }}</td>
+                <td>{{ movie.imdb_rating }}</td>
                 {% if current_user.is_authenticated and current_user.is_admin %}
-                    <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">
-                        <button>Delete Movie</button>
-                    </a>
+                    <td>
+                        <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">Delete</a>
+                    </td>
                 {% endif %}
-            </li>
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
 {% endblock %}

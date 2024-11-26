@@ -1,20 +1,36 @@
 {% extends "base.html" %}
-{% block title %}Movie Queue{% endblock %}
+{% block title %}Queue{% endblock %}
 {% block content %}
-<h2>Movie Queue</h2>
-<ul>
-    {% for movie in movies %}
-    <li>
-        {{ movie.title }}
-        {% if current_user.is_authenticated and current_user.is_admin %}
-            <a href="{{ url_for('main.mark_watched', movie_id=movie.id) }}">
-                <button>Mark as Watched</button>
-            </a>
-            <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">
-                <button>Delete Movie</button>
-            </a>
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
+    <h2>Movie Queue</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Runtime</th>
+            <th>Genre</th>
+            <th>IMDb Rating</th>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                <th>Actions</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for movie in movies %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.year }}</td>
+                <td>{{ movie.runtime }}</td>
+                <td>{{ movie.genre }}</td>
+                <td>{{ movie.imdb_rating }}</td>
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                    <td>
+                        <a href="{{ url_for('main.mark_watched', movie_id=movie.id) }}">Move to Watched</a> |
+                        <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">Delete</a>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

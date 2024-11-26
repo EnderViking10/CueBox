@@ -1,29 +1,48 @@
 {% extends "base.html" %}
-{% block title %}Movie Suggestions{% endblock %}
+{% block title %}Suggestions{% endblock %}
 {% block content %}
-    <h2>Movie Suggestions</h2>
-    {% if current_user.is_authenticated and current_user.is_admin %}
-        <a href="{{ url_for('main.delete_all') }}">
-            <button>Delete all</button>
-        </a>
-    {% endif %}
-    <form action="{{ url_for('main.add_movie') }}" method="POST">
-        <input type="text" name="title" placeholder="Add a movie to the queue" required>
-        <button type="submit">Add Movie</button>
-    </form>
-    <ul>
+    <h2>Suggested Movies</h2>
+
+    <div class="form-container">
+        <form action="{{ url_for('main.add_movie') }}" method="POST">
+            <label for="title">Movie Title:</label>
+            <input type="text" name="title" id="title" placeholder="Enter movie title" required>
+            <button type="submit">Add Movie</button>
+        </form>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('main.delete_all') }}" style="padding: 30px">Delete all</a>
+        {% endif %}
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Runtime</th>
+            <th>Genre</th>
+            <th>IMDb Rating</th>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                <th>Actions</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
         {% for movie in movies %}
-            <li>
-                {{ movie.title }}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.year }}</td>
+                <td>{{ movie.runtime }}</td>
+                <td>{{ movie.genre }}</td>
+                <td>{{ movie.imdb_rating }}</td>
                 {% if current_user.is_authenticated and current_user.is_admin %}
-                    <a href="{{ url_for('main.mark_queue', movie_id=movie.id) }}">
-                        <button>Move to queue</button>
-                    </a>
-                    <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">
-                        <button>Delete</button>
-                    </a>
+                    <td>
+                        <a href="{{ url_for('main.mark_queue', movie_id=movie.id) }}">Move to Queue</a> |
+                        <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">Delete</a>
+                    </td>
                 {% endif %}
-            </li>
+            </tr>
         {% endfor %}
-    </ul>
+        </tbody>
+    </table>
 {% endblock %}

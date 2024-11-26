@@ -1,13 +1,18 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session, abort
+import urllib.parse
+
+import requests
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from flask_login import login_user, logout_user, login_required, current_user
-from app.models import db, Movie, User
-from werkzeug.security import check_password_hash
 from sqlalchemy import desc
+from werkzeug.security import check_password_hash
+
+import app
+from app.models import db, Movie, User
 
 main = Blueprint('main', __name__)
 
 
-@main.route('`/')
+@main.route('/')
 def home():
     movies = Movie.query.filter_by(in_queue=False, watched=False).all()
     return render_template('suggestions.html', movies=movies)
@@ -21,22 +26,7 @@ def queue():
 
 @main.route('/watched', methods=['GET', 'POST'])
 def watched_movies():
-    """Page displaying watched movies and allowing manual additions for admins."""
-    if request.method == 'POST':
-        if not current_user.is_authenticated or not current_user.is_admin:
-            flash('You do not have permission to add movies to the watched list.', 'danger')
-            return redirect(url_for('main.watched_movies'))
-
-        title = request.form.get('title')
-        if title:
-            new_movie = Movie(title=title, in_queue=False, watched=True)
-            db.session.add(new_movie)
-            db.session.commit()
-            flash('Movie added to the watched list!', 'success')
-        else:
-            flash('Please enter a movie title.', 'danger')
-        return redirect(url_for('main.watched_movies'))
-
+    """Page displaying watched movies"""
     movies = Movie.query.filter_by(watched=True).order_by(desc(Movie.id)).all()
     return render_template('watched.html', movies=movies)
 
@@ -48,10 +38,31 @@ def add_movie():
         if len(title) > 50:
             flash('Movie title must be less than 64 characters', 'danger')
             return redirect(url_for('main.home'))
-        new_movie = Movie(title=title)
+
+        url_movie_title = urllib.parse.quote_plus(title)
+
+        api_call = f"https://www.omdbapi.com/?t={url_movie_title}&apikey={app.Config.OMDB_API_KEY}"
+        response = requests.get(api_call)
+
+        # Check if the response is successful
+        if response.status_code == 200:
+            # Parse the JSON data
+            data = response.json()
+            if data.get("Response") == "False":
+                flash('Movie title does not exist.', 'danger')
+                return redirect(url_for('main.home'))
+        else:
+            abort(response.status_code)
+
+        new_movie = Movie(
+            title=data.get('Title'),
+            year=data.get('Year'),
+            runtime=data.get('Runtime'),
+            genre=data.get('Genre'),
+            imdb_rating=data.get('imdbRating')
+        )
         db.session.add(new_movie)
         db.session.commit()
-        flash('Movie has been suggested!', 'success')
     return redirect(url_for('main.home'))
 
 
@@ -89,7 +100,7 @@ def delete_movie(movie_id):
     db.session.delete(movie)
     db.session.commit()
     flash('Movie has been deleted', 'success')
-    return redirect(url_for('main.home'))
+    return redirect(request.referrer or url_for('main.home'))
 
 
 @main.route('/delete_all')
