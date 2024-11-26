@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, session
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import db, Movie, User
 from werkzeug.security import check_password_hash
@@ -7,7 +7,7 @@ from sqlalchemy import desc
 main = Blueprint('main', __name__)
 
 
-@main.route('/')
+@main.route('`/')
 def home():
     movies = Movie.query.filter_by(in_queue=False, watched=False).all()
     return render_template('suggestions.html', movies=movies)
@@ -17,31 +17,6 @@ def home():
 def queue():
     movies = Movie.query.filter_by(in_queue=True).all()
     return render_template('queue.html', movies=movies)
-
-
-@main.route('/mark_queue/<int:movie_id>')
-@login_required
-def mark_queue(movie_id):
-    movie = Movie.query.get_or_404(movie_id)
-    if current_user.is_admin:
-        movie.in_queue = True
-        db.session.commit()
-        flash('Movie moved to queue!', 'success')
-    return redirect(url_for('main.home'))
-
-
-@main.route('/add', methods=['POST'])
-def add_movie():
-    title = request.form.get('title')
-    if title:
-        if len(title) > 50:
-            flash('Movie title must be less than 64 characters', 'danger')
-            return redirect(url_for('main.home'))
-        new_movie = Movie(title=title)
-        db.session.add(new_movie)
-        db.session.commit()
-        flash('Movie has been suggested!', 'success')
-    return redirect(url_for('main.home'))
 
 
 @main.route('/watched', methods=['GET', 'POST'])
@@ -66,15 +41,42 @@ def watched_movies():
     return render_template('watched.html', movies=movies)
 
 
+@main.route('/add', methods=['POST'])
+def add_movie():
+    title = request.form.get('title')
+    if title:
+        if len(title) > 50:
+            flash('Movie title must be less than 64 characters', 'danger')
+            return redirect(url_for('main.home'))
+        new_movie = Movie(title=title)
+        db.session.add(new_movie)
+        db.session.commit()
+        flash('Movie has been suggested!', 'success')
+    return redirect(url_for('main.home'))
+
+
+@main.route('/mark_queue/<int:movie_id>')
+@login_required
+def mark_queue(movie_id):
+    movie = Movie.query.get_or_404(movie_id)
+    if not current_user.is_admin:
+        abort(403)
+    movie.in_queue = True
+    db.session.commit()
+    flash('Movie moved to queue!', 'success')
+    return redirect(url_for('main.home'))
+
+
 @main.route('/mark_watched/<int:movie_id>')
 @login_required
 def mark_watched(movie_id):
     movie = Movie.query.get_or_404(movie_id)
-    if current_user.is_admin:
-        movie.in_queue = False
-        movie.watched = True
-        db.session.commit()
-        flash('Movie marked as watched!', 'success')
+    if not current_user.is_admin:
+        abort(403)
+    movie.in_queue = False
+    movie.watched = True
+    db.session.commit()
+    flash('Movie marked as watched!', 'success')
     return redirect(url_for('main.queue'))
 
 
@@ -82,10 +84,11 @@ def mark_watched(movie_id):
 @login_required
 def delete_movie(movie_id):
     movie = Movie.query.get_or_404(movie_id)
-    if current_user.is_admin:
-        db.session.delete(movie)
-        db.session.commit()
-        flash('Movie has been deleted', 'success')
+    if not current_user.is_admin:
+        abort(403)
+    db.session.delete(movie)
+    db.session.commit()
+    flash('Movie has been deleted', 'success')
     return redirect(url_for('main.home'))
 
 
@@ -93,11 +96,12 @@ def delete_movie(movie_id):
 @login_required
 def delete_all():
     movies = Movie.query.filter_by(in_queue=False, watched=False)
-    if current_user.is_admin:
-        for movie in movies:
-            db.session.delete(movie)
-        db.session.commit()
-        flash('Deleted all movies', 'success')
+    if not current_user.is_admin:
+        abort(403)
+    for movie in movies:
+        db.session.delete(movie)
+    db.session.commit()
+    flash('Deleted all movies', 'success')
     return redirect(url_for('main.home'))
 
 
