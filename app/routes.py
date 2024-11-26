@@ -55,6 +55,11 @@ def add_movie():
         else:
             abort(response.status_code)
 
+        existing_movie = Movie.query.filter_by(title=data.get('Title')).first()
+        if existing_movie:
+            flash('That movie is already in here', 'danger')
+            return redirect(url_for('main.home'))
+
         new_movie = Movie(
             title=data.get('Title'),
             year=data.get('Year'),
