@@ -20,6 +20,7 @@ class Movie(db.Model):
     runtime = db.Column(db.Integer, nullable=False)
     genre = db.Column(db.String(200), nullable=False)
     imdb_rating = db.Column(db.Integer, nullable=False)
+    reason = db.Column(db.String(200), nullable=False)
 
     __table_args__ = (
         UniqueConstraint('title', name='uq_movie_title'),

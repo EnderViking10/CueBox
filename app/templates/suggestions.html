@@ -7,6 +7,9 @@
         <form action="{{ url_for('main.add_movie') }}" method="POST">
             <label for="title">Movie Title:</label>
             <input type="text" name="title" id="title" placeholder="Enter movie title" required>
+            <br/>
+            <label for="reason">Reason:</label>
+            <input type="text" name="reason" id="reason" placeholder="Reason for suggestion (Optional)">
             <button type="submit">Add Movie</button>
         </form>
         {% if current_user.is_authenticated and current_user.is_admin %}
@@ -35,6 +38,7 @@
                 <td>{{ movie.runtime }}</td>
                 <td>{{ movie.genre }}</td>
                 <td>{{ movie.imdb_rating }}</td>
+                <td>{{ movie.reason }}</td>
                 {% if current_user.is_authenticated and current_user.is_admin %}
                     <td>
                         <a href="{{ url_for('main.mark_queue', movie_id=movie.id) }}">Move to Queue</a> |

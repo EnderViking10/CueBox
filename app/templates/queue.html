@@ -23,6 +23,7 @@
                 <td>{{ movie.runtime }}</td>
                 <td>{{ movie.genre }}</td>
                 <td>{{ movie.imdb_rating }}</td>
+                <td>{{ movie.reason }}</td>
                 {% if current_user.is_authenticated and current_user.is_admin %}
                     <td>
                         <a href="{{ url_for('main.mark_watched', movie_id=movie.id) }}">Move to Watched</a> |

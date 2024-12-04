@@ -45,6 +45,7 @@ def add_movie():
         api_call = f"https://www.omdbapi.com/?t={url_movie_title}&apikey={app.Config.OMDB_API_KEY}"
         response = requests.get(api_call)
 
+        data = None
         # Check if the response is successful
         if response.status_code == 200:
             # Parse the JSON data
@@ -65,7 +66,8 @@ def add_movie():
             year=data.get('Year'),
             runtime=data.get('Runtime'),
             genre=data.get('Genre'),
-            imdb_rating=data.get('imdbRating')
+            imdb_rating=data.get('imdbRating'),
+            reason=request.form.get('reason')
         )
         try:
             db.session.add(new_movie)
