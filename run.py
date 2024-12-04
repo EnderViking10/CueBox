@@ -51,8 +51,6 @@ def get_imdb_id():
 
         movie.imdb_id = data["imdbID"]
 
-
-
     try:
         db.session.commit()
     except IntegrityError:
