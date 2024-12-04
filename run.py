@@ -1,7 +1,11 @@
-from app import create_app, db
-from app.models import User
 from getpass import getpass
+from sqlite3 import IntegrityError
+
+import requests
 from werkzeug.security import generate_password_hash
+
+from app import create_app, db
+from app.models import User, Movie
 from config import ProductionConfig
 
 app = create_app(ProductionConfig)
@@ -28,6 +32,32 @@ def createadmin():
     db.session.add(admin)
     db.session.commit()
     print(f"Admin user '{username}' created!")
+
+
+# CLI command to update the imdb ids
+@app.cli.command('get_imdb_id')
+def get_imdb_id():
+    """Get the imdb ids."""
+    movies = Movie.query.filter_by(watched=True).all()
+
+    for movie in movies:
+        api_call = f"https://www.omdbapi.com/?t={url_movie_title}&apikey={app.Config.OMDB_API_KEY}"
+        response = requests.get(api_call)
+
+        data = None
+        # Check if the response is successful
+        if response.status_code == 200:
+            data = response.json()
+
+        movie.imdb_id = data["imdbID"]
+
+
+
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()  # Rollback the transaction
+        print(IntegrityError)
 
 
 if __name__ == "__main__":
