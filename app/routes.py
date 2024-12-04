@@ -67,7 +67,8 @@ def add_movie():
             runtime=data.get('Runtime'),
             genre=data.get('Genre'),
             imdb_rating=data.get('imdbRating'),
-            reason=request.form.get('reason')
+            reason=request.form.get('reason'),
+            imdb_id=data.get('imdbID')
         )
         try:
             db.session.add(new_movie)

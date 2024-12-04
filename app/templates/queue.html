@@ -19,7 +19,7 @@
         <tbody>
         {% for movie in movies %}
             <tr>
-                <td>{{ movie.title }}</td>
+                <td><a href="https://www.imdb.com/title/{{ movie.imdb_id }}/">{{ movie.title }}</a></td>
                 <td>{{ movie.year }}</td>
                 <td>{{ movie.runtime }}</td>
                 <td>{{ movie.genre }}</td>
