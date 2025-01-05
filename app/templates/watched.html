@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Watched Movies{% endblock %}
 {% block content %}
+    <form method="GET" action="{{ url_for('main.home') }}">
+        <input type="text" name="search" placeholder="Search movies..." value="{{ search_query or '' }}">
+        <button type="submit">Search</button>
+    </form>
     <h2>Watched Movies</h2>
     <table>
         <thead>
@@ -32,4 +36,24 @@
         {% endfor %}
         </tbody>
     </table>
+    <nav>
+        {% if movies.has_prev %}
+            <a href="{{ url_for('main.home', page=movies.prev_num, search=search_query) }}">Previous</a>
+        {% endif %}
+
+        {% for page_num in movies.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if page_num %}
+                <a href="{{ url_for('main.home', page=page_num, search=search_query) }}"
+                   class="{% if page_num == movies.page %}active{% endif %}">
+                    {{ page_num }}
+                </a>
+            {% else %}
+                <span>…</span>
+            {% endif %}
+        {% endfor %}
+
+        {% if movies.has_next %}
+            <a href="{{ url_for('main.home', page=movies.next_num, search=search_query) }}">Next</a>
+        {% endif %}
+    </nav>
 {% endblock %}

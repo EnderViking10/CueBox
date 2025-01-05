@@ -15,20 +15,41 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def home():
-    movies = Movie.query.filter_by(in_queue=False, watched=False).all()
-    return render_template('suggestions.html', movies=movies)
+    query = request.args.get('search', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    if query:
+        movies = Movie.query.filter(Movie.title.ilike(f"%{query}%"), Movie.in_queue == False, Movie.watched == False) \
+            .paginate(page=page, per_page=per_page)
+    else:
+        movies = Movie.query.filter_by(in_queue=False, watched=False).paginate(page=page, per_page=per_page)
+    return render_template('suggestions.html', movies=movies, search_query=query)
 
 
 @main.route('/queue')
 def queue():
-    movies = Movie.query.filter_by(in_queue=True).all()
+    query = request.args.get('search', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    if query:
+        movies = Movie.query.filter(Movie.title.ilike(f"%{query}%"), Movie.in_queue == False, Movie.watched == False) \
+            .paginate(page=page, per_page=per_page)
+    else:
+        movies = Movie.query.filter_by(in_queue=True, watched=False).paginate(page=page, per_page=per_page)
     return render_template('queue.html', movies=movies)
 
 
 @main.route('/watched', methods=['GET', 'POST'])
 def watched_movies():
     """Page displaying watched movies"""
-    movies = Movie.query.filter_by(watched=True).order_by(desc(Movie.id)).all()
+    query = request.args.get('search', '')
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    if query:
+        movies = Movie.query.filter(Movie.title.ilike(f"%{query}%"), Movie.in_queue == False, Movie.watched == False) \
+            .paginate(page=page, per_page=per_page)
+    else:
+        movies = Movie.query.filter_by(in_queue=False, watched=True).paginate(page=page, per_page=per_page)
     return render_template('watched.html', movies=movies)
 
 

@@ -9,7 +9,8 @@
 :root {
     --background-color: #f4f4f9;
     --text-color: #333;
-    --link-color: #4CAF50;
+    --link-color: #333;
+    --link-hover-color: #555;
     --header-bg: #4CAF50;
     --header-text: white;
     --button-bg: #4CAF50;
@@ -19,7 +20,8 @@
 .dark-mode {
     --background-color: #121212;
     --text-color: #f4f4f9;
-    --link-color: #80caff;
+    --link-color: #ddd;
+    --link-hover-color: #aaa;
     --header-bg: #333;
     --header-text: #f4f4f9;
     --button-bg: #555;
@@ -311,3 +313,12 @@ input:checked + .slider:before {
     background-color: #ff9800; /* Orange for warnings */
 }
 
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--link-hover-color);
+    text-decoration: underline;
+}
