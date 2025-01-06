@@ -50,7 +50,7 @@
                 {% endif %}
                 {% if current_user.is_authenticated and current_user.is_admin %}
                     <td>
-                        <a href="{{ url_for('main.mark_queue', movie_id=movie.id) }}">Move to Queue</a> |
+                        <a href="{{ url_for('main.mark_queue', movie_id=movie.id) }}">Queue</a> |
                         <a href="{{ url_for('main.delete_movie', movie_id=movie.id) }}">Delete</a>
                     </td>
                 {% endif %}
