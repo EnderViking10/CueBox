@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Watched Movies{% endblock %}
 {% block content %}
-    <form method="GET" action="{{ url_for('main.home') }}">
+    <form method="GET" action="{{ url_for('main.watched_movies') }}">
         <input type="text" name="search" placeholder="Search movies..." value="{{ search_query or '' }}">
         <button type="submit">Search</button>
     </form>
