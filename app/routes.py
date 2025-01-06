@@ -32,7 +32,7 @@ def queue():
     page = request.args.get('page', 1, type=int)
     per_page = 10
     if query:
-        movies = Movie.query.filter(Movie.title.ilike(f"%{query}%"), Movie.in_queue == False, Movie.watched == False) \
+        movies = Movie.query.filter(Movie.title.ilike(f"%{query}%"), Movie.in_queue == True, Movie.watched == False) \
             .paginate(page=page, per_page=per_page)
     else:
         movies = Movie.query.filter_by(in_queue=True, watched=False).paginate(page=page, per_page=per_page)
@@ -46,7 +46,7 @@ def watched_movies():
     page = request.args.get('page', 1, type=int)
     per_page = 10
     if query:
-        movies = Movie.query.filter(Movie.title.ilike(f"%{query}%"), Movie.in_queue == False, Movie.watched == False) \
+        movies = Movie.query.filter(Movie.title.ilike(f"%{query}%"), Movie.in_queue == False, Movie.watched == True) \
             .paginate(page=page, per_page=per_page)
     else:
         movies = Movie.query.filter_by(in_queue=False, watched=True).paginate(page=page, per_page=per_page)
